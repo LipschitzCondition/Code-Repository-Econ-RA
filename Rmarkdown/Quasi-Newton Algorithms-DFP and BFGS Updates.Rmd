@@ -80,6 +80,8 @@ BFGS.min<-function(x,g,g.prime,epsilon,itr){
 ```{r}
 #Minimizing by DFP and its Contour Plot showing convergence:
 result.DFP<-DFP.min(c(-4,0),g,g.prime,1e-10,40)
+
+#Contour plot: basic settings
 z = matrix(0,100,100)
 x1.max = max(4,ceiling(max(result.DFP[[3]][,1])))
 x1.min = min(0.5,floor(min(result.DFP[[3]][,1])))
@@ -93,17 +95,24 @@ for(i in 1:100){
   }
 }
 tcol <- terrain.colors(12)
+
+#Contour Plot
 contour(x1, x2, z, nlevels=20, col = tcol)
 
+#Path of Convergence
 for(i in 1:40){
   segments(result.DFP[[3]][i,1],result.DFP[[3]][i,2],result.DFP[[3]][i+1,1],result.DFP[[3]][i+1,2],lty=2)
 }
+
+#List the result
 result.DFP
 ```
   
 ```{r}
 #Minimizing by BFGS and its Contour Plot showing convergence:
 result.BFGS<-BFGS.min(c(-4,0),g,g.prime,1e-10,40)
+
+#Contour plot: basic settings
 z = matrix(0,100,100)
 x1.max = max(4,ceiling(max(result.BFGS[[3]][,1])))
 x1.min = min(0.5,floor(min(result.BFGS[[3]][,1])))
@@ -117,11 +126,16 @@ for(i in 1:100){
   }
 }
 tcol <- terrain.colors(12)
+
+#Contour Plot
 contour(x1, x2, z, nlevels=20, col = tcol)
 
+#Path of Convergence
 for(i in 1:40){
   segments(result.BFGS[[3]][i,1],result.BFGS[[3]][i,2],result.BFGS[[3]][i+1,1],result.BFGS[[3]][i+1,2],lty=2)
 }
+
+#List the result
 result.BFGS
 ```
   
