@@ -1,5 +1,5 @@
 ---
-title: "Expectation Maximization Algorithm"
+title: "Expectation-Maximization Algorithm"
 author: "Zihui Wang"
 date: "2022-10-12"
 output: 
