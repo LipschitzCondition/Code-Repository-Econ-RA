@@ -12,7 +12,8 @@ library(dplyr)
 library(maps)
 ```
 
-Data Visualization and Interaction  
+Data Visualization and Interaction for US crime rates data in 1973 ("USArrests" in R datasets)
+
 ```{r}
 #Import data set describing violent crime rates by US state
 USArrest<-USArrests
