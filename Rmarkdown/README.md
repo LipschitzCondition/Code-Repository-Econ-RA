@@ -1,2 +1,2 @@
 # R  
-Folder names are the courses these codes were written for.  
+Folder names show the courses these codes were written for.  
