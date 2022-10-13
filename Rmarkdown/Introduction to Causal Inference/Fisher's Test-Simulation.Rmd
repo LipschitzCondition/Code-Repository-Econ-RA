@@ -1,0 +1,97 @@
+---
+title: "Fisher's Test-Simulation"
+author: "Zihui Wang"
+date: "2022-10-13"
+output: 
+  pdf_document: default
+---
+
+```{r, include=F}
+library(ggplot2)
+```
+
+*The data was generated from a randomized experiment carried out around 1970 in Southern Florida to evaluate cloud seeding.*  
+*On each of 52 days that were suitable for cloud seeding, a random mechanism was used to decide whether to seed or not.*  
+*A plane flew through the clouds each suitable day (both seeding and non-seeding days).*  
+*The experimenter set up the plane to inject or not depending on the random outcome.*  
+*The plane’s pilot did not know whether the seeding mechanism was loaded to inject or not.*  
+*Precipitation was measured as total rain volume (in acre-feet) resulting from the clouds in the 24 hours following the plane’s run.*  
+```{r}
+cloudseed<-read.csv("/Users/wangzihui/Downloads/cloudseed.csv",header=T)
+pooled_data<-c(cloudseed$seeded,cloudseed$unseeded)
+```
+
+```{r}
+#Simulating to get p-value testing Fisher’s sharp null hypothesis of no treatment effect
+set.seed(29)
+
+nrep<-1000
+simulation_T<-NULL
+
+for(i in 1:nrep){
+  random<-sample(1:52,26,replace=F)
+  simulation_T[i]<-abs(mean(pooled_data[random])-mean(pooled_data[-random]))
+}
+
+sample_T<-abs(mean(cloudseed$seeded)-mean(cloudseed$unseeded))
+pval<-length(simulation_T[simulation_T>=sample_T])/nrep
+pval<-round(pval,digits=3)
+
+#Plot the histogram
+ggplot()+
+  geom_histogram(aes(x=simulation_T,y=after_stat(density)),binwidth=20,fill="blue",color="blue",alpha=0.5,size=0.1)+
+  geom_segment(aes(x=sample_T,xend=sample_T,y=0.0006,yend=0.003))+
+  geom_text(aes(x=sample_T,y=0.0032,label=paste("T observed=",sample_T)),size=4,inherit.aes = FALSE)+
+  geom_text(aes(x=300,y=0.005,label=paste("p-value=",pval)),size=4.5,inherit.aes = FALSE)+
+  theme_bw()
+```
+  
+```{r}
+#Testing whether  variability rather than mean amount of the rainfall increased
+set.seed(29)
+
+simulation_T2<-NULL
+
+for(i in 1:nrep){
+  random<-sample(1:52,26,replace=F)
+  simulation_T2[i]<-var(pooled_data[random])/var(pooled_data[-random])
+}
+
+sample_T2<-var(cloudseed$seeded)/var(cloudseed$unseeded)
+sample_T2<-round(sample_T2,digits=3)
+pval2<-length(simulation_T2[simulation_T2>=sample_T2])/nrep
+pval2<-round(pval2,digits=3)
+
+#Plot the histogram
+ggplot()+
+  geom_histogram(aes(x=simulation_T2,y=after_stat(density)),binwidth=0.5,fill="blue",color="blue",alpha=0.5,size=0.1)+
+  geom_segment(aes(x=sample_T2,xend=sample_T2,y=0.1,yend=0.65))+
+  geom_text(aes(x=1.5*sample_T2,y=0.75,label=paste("T2 observed=",sample_T2)),size=4,inherit.aes = FALSE)+
+  geom_text(aes(x=25,y=0.9,label=paste("p-value=",pval2)),size=4.5,inherit.aes = FALSE)+
+  theme_bw()
+```
+  
+```{r}
+#Regard the impact of cloud as multiplicative rather than additive
+set.seed(29)
+
+simulation_T3<-NULL
+
+for(i in 1:nrep){
+  random<-sample(1:52,26,replace=F)
+  simulation_T3[i]<-abs(mean(log(pooled_data[random]))-mean(log(pooled_data[-random])))
+}
+
+sample_T3<-abs(mean(log(cloudseed$seeded))-mean(log(cloudseed$unseeded)))
+sample_T3<-round(sample_T3,digits=3)
+pval3<-length(simulation_T3[simulation_T3>=sample_T3])/nrep
+pval3<-round(pval3,digits=3)
+
+#plot the histogram
+ggplot()+
+  geom_histogram(aes(x=simulation_T3,y=after_stat(density)),binwidth=0.1,fill="blue",color="blue",alpha=0.5,size=0.1)+
+  geom_segment(aes(x=sample_T3,xend=sample_T3,y=0.2,yend=1))+
+  geom_text(aes(x=1.05,y=1.2,label=paste("T3 observed=",sample_T3)),size=4,inherit.aes = FALSE)+
+  geom_text(aes(x=0.7,y=1.5,label=paste("p-value=",pval3)),size=4.5,inherit.aes = FALSE)+
+  theme_bw()
+```
